@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+ namespace: default
+ name: httpd-deploy
+ labels: 
+  app: httpd
+spec: 
+ replicas: 1
+ selector: 
+  matchLabels: 
+   app: httpd
+ strategy: 
+  type: RollingUpdate
+  rollingUpdate: 
+   maxSurge: 1
+   maxUnavailable: 1
+ template: 
+  metadata: 
+   labels: 
+     app: httpd
+  spec: 
+   containers: 
+    - name: apache-server
+      image: httpd
+      ports: 
+       - containerPort: 80
+      volumeMounts: 
+       - name: httpd-data
+         mountPath: /var/lib/httpd
+   volumes: 
+    - name: httpd-data
+      hostPath: 
+       path: /home/ubuntu
+       type: DirectoryOrCreate
+
